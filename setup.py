@@ -12,13 +12,13 @@ pyasmjit_module = Extension(
 setup(
     author       = 'Christian Heitman',
     author_email = 'cnheitman@fundacionsadosky.org.ar',
-    description  = 'PyAsmJIT',
+    description  = 'JIT assemby code generation and execution',
     ext_modules  = [
         pyasmjit_module
     ],
     license      = 'BSD 2-Clause',
     name         = 'pyasmjit',
-    url          = 'http://github.com/programa-stic/barf-project',
+    url          = 'http://github.com/programa-stic/pyasmjit',
     version      = '0.2',
     test_suite   = 'tests',
 )
