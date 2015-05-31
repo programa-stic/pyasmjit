@@ -417,11 +417,13 @@ static PyMethodDef pyasmjit_methods[] = {
     {NULL, NULL, 0, NULL}
 };
 
+static const char *pyasmjit_docstring = "JIT module for pyasmjit";
+
 /*
  * Python calls this to let us initialize our module
  */
 PyMODINIT_FUNC
 initpyasmjit(void)
 {
-    (void) Py_InitModule("pyasmjit", pyasmjit_methods);
+    (void) Py_InitModule3("pyasmjit", pyasmjit_methods, pyasmjit_docstring);
 }
