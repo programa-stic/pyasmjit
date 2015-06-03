@@ -248,7 +248,7 @@ x86_run(unsigned char *data, unsigned int size, x86_context_t *ctx) {
     memcpy(mem, data, size);
 
     /* Typecast allocated memory to a function pointer */
-    void (*func) () = mem;
+    void (*func) (x86_context_t *) = mem;
 
     /* Run code */
     func(ctx);
@@ -280,7 +280,7 @@ arm_run(unsigned char *data, unsigned int size, arm_context_t *ctx) {
     memcpy(mem, data, size);
 
     /* Typecast allocated memory to a function pointer */
-    void (*func) () = mem;
+    void (*func) (arm_context_t *) = mem;
 
     /* Run code */
     func(ctx);
