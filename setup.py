@@ -1,11 +1,13 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 
-from setuptools import setup, Extension
+from setuptools import Extension
+from setuptools import find_packages
+from setuptools import setup
 
 __version__ = '0.2'
 
 pyasmjit_module = Extension(
-    'pyasmjit.pyasmjit',
+    'pyasmjit',
     sources      = [
         'pyasmjit/pyasmjit.c'
     ],
@@ -20,7 +22,9 @@ setup(
     url          = 'http://github.com/programa-stic/pyasmjit',
     version      = __version__,
     test_suite   = 'tests',
+    ext_package  = 'pyasmjit',
     ext_modules  = [
         pyasmjit_module,
     ],
+    packages=find_packages(exclude=['tests', 'tests.*']),
 )
