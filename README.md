@@ -1,20 +1,21 @@
 # PyAsmJIT
 
-*PyAsmJIT* is a Python package for x86_64/ARM assembly code generation and
+*PyAsmJIT* is a Python package for x86_64/ARMv7 assembly code generation and
 execution.
 
-This package was developed in order to test BARF instruction translation from
-x86_64/ARM to REIL. The main idea is to be able to run fragments of code
-natively. Then, the same fragment is translated to REIL and executed in a REIL
-VM. Finally, both final contexts (the one obtained through native execution
-and the one from emulation) are compare for differences.
+This package was developed as part of the BARF project
+(https://github.com/programa-stic/barf-project) in order to test instruction
+translation from x86_64/ARM to REIL. The main idea is to be able to run
+fragments of code natively. Then, the same fragment is translated to REIL and
+executed in a REIL VM. Finally, both final contexts (the one obtained through
+native execution and the one from emulation) are compare for differences.
 
 # Installation
 
 The following command installs the package:
 
 ```bash
-$ sudo python setup.py install
+$ python setup.py install
 ```
 
 # Dependecies
@@ -24,7 +25,7 @@ $ sudo python setup.py install
 # Quickstart
 
 The following extract shows how to execute on-the-fly a fragment of
-x86 assembly code.
+x86_64 assembly code.
 
 ```python
 import pyasmjit
@@ -50,7 +51,7 @@ rv, context_out = pyasmjit.x86_execute(code, context_in)
 print context_out
 ```
 
-And for ARM:
+And for ARMv7:
 
 ```python
 import pyasmjit
@@ -100,8 +101,8 @@ flags. Then, the code is executed as a thread.
 
 Currently:
 
-* It does not handle memory operations.
-* It only works with 64-bits code.
+* It does not handle memory operations
+* It only works with x86_64 and ARMv7
 
 # License
 

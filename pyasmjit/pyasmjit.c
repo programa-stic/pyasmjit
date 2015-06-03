@@ -22,11 +22,10 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#include <Python.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/mman.h>
-
-#include "Python.h"
 
 /* TODO: Memory: See where to locate this information. */
 void * arm_mem_pool = 0;
@@ -295,8 +294,8 @@ arm_run(unsigned char *data, unsigned int size, arm_context_t *ctx) {
 /*
  * Function to be called from Python
  */
-PyObject *
-py_x86_jit(PyObject * self, PyObject * args)
+static PyObject *
+pyasmjit_x86_jit(PyObject * self, PyObject * args)
 {
     unsigned char   *data;
     unsigned int     size;
@@ -328,8 +327,8 @@ py_x86_jit(PyObject * self, PyObject * args)
 /*
  * Function to be called from Python
  */
-PyObject *
-py_arm_jit(PyObject * self, PyObject * args)
+static PyObject *
+pyasmjit_arm_jit(PyObject * self, PyObject * args)
 {
     unsigned char   *data;
     unsigned int     size;
@@ -364,8 +363,8 @@ py_arm_jit(PyObject * self, PyObject * args)
 /*
  * Function to be called from Python
  */
-PyObject *
-py_arm_alloc(PyObject * self, PyObject * args)
+static PyObject *
+pyasmjit_arm_alloc(PyObject * self, PyObject * args)
 {
     unsigned int     size;
 
@@ -395,8 +394,8 @@ py_arm_alloc(PyObject * self, PyObject * args)
 /*
  * Function to be called from Python
  */
-PyObject *
-py_arm_free(PyObject * self, PyObject * args)
+static PyObject *
+pyasmjit_arm_free(PyObject * self, PyObject * args)
 {
     /* TODO: Allow multiple memory pools. */
     if (arm_mem_pool) {
@@ -411,18 +410,20 @@ py_arm_free(PyObject * self, PyObject * args)
  * Bind Python function names to our C functions
  */
 static PyMethodDef pyasmjit_methods[] = {
-    {"x86_jit", py_x86_jit, METH_VARARGS},
-    {"arm_jit", py_arm_jit, METH_VARARGS},
-    {"arm_alloc", py_arm_alloc, METH_VARARGS},
-    {"arm_free", py_arm_free, METH_VARARGS},
-    {NULL, NULL}
+    {"x86_jit", pyasmjit_x86_jit, METH_VARARGS, "JIT execute X86_64 code"},
+    {"arm_jit", pyasmjit_arm_jit, METH_VARARGS, "JIT execute ARMv7 code"},
+    {"arm_alloc", pyasmjit_arm_alloc, METH_VARARGS, "Map ARM memory"},
+    {"arm_free", pyasmjit_arm_free, METH_VARARGS, "Unmap ARM memory"},
+    {NULL, NULL, 0, NULL}
 };
+
+static const char *pyasmjit_docstring = "JIT module for pyasmjit";
 
 /*
  * Python calls this to let us initialize our module
  */
-void
+PyMODINIT_FUNC
 initpyasmjit(void)
 {
-    (void) Py_InitModule("pyasmjit", pyasmjit_methods);
+    (void) Py_InitModule3("pyasmjit", pyasmjit_methods, pyasmjit_docstring);
 }
