@@ -21,10 +21,19 @@ setup(
     license      = 'BSD 2-Clause',
     url          = 'http://github.com/programa-stic/pyasmjit',
     version      = __version__,
-    test_suite   = 'tests',
+    classifiers  = [
+        'Development Status :: 2 - Pre-Alpha',
+        'License :: OSI Approved :: BSD License',
+        'Natural Language :: English',
+        'Operating System :: POSIX :: Linux',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: C',
+        'Topic :: Software Development :: Assemblers',
+    ],
     ext_package  = 'pyasmjit',
     ext_modules  = [
         pyasmjit_module,
     ],
     packages=find_packages(exclude=['tests', 'tests.*']),
+    test_suite   = 'tests',
 )
