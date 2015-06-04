@@ -28,6 +28,9 @@ import tempfile
 
 import pyasmjit
 
+x86_template_assembly = """
+"""
+
 x86_64_template_assembly = """\
 ;; Make sure to compile in 64 bits
 BITS 64
@@ -192,6 +195,9 @@ pop {{r0 - r12, lr}}
 /* Return */
 blx lr
 """
+
+def x86_execute(assembly, context):
+    raise NotImplementedError
 
 def x86_64_execute(assembly, context):
     # Initialize return values
