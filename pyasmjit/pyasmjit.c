@@ -50,7 +50,7 @@ typedef struct {
     unsigned long r14;      // 15
     unsigned long r15;      // 16
     unsigned long rflags;   // 17
-} x86_context_t;
+} x86_64_context_t;
 
 typedef struct {
     unsigned long r0;       // 0
@@ -73,7 +73,7 @@ typedef struct {
 } arm_context_t;
 
 void
-x86_print_context(x86_context_t *ctx)
+x86_64_print_context(x86_64_context_t *ctx)
 {
     printf("ctx @ %p\n", ctx);
 
@@ -134,7 +134,7 @@ load_register_from_dict(PyObject *dict, const char *reg, unsigned long _default)
 }
 
 void
-x86_load_context_from_dict(PyObject *dict, x86_context_t *ctx)
+x86_64_load_context_from_dict(PyObject *dict, x86_64_context_t *ctx)
 {
     ctx->rax    = load_register_from_dict(dict,    "rax",     0);
     ctx->rbx    = load_register_from_dict(dict,    "rbx",     0);
@@ -179,7 +179,7 @@ arm_load_context_from_dict(PyObject *dict, arm_context_t *ctx)
 }
 
 void
-x86_save_context_to_dict(PyObject *dict, x86_context_t *ctx)
+x86_64_save_context_to_dict(PyObject *dict, x86_64_context_t *ctx)
 {
     PyDict_SetItemString(dict,    "rax", Py_BuildValue("k",    ctx->rax));
     PyDict_SetItemString(dict,    "rbx", Py_BuildValue("k",    ctx->rbx));
@@ -224,7 +224,7 @@ arm_save_context_to_dict(PyObject *dict, arm_context_t *ctx)
 }
 
 unsigned long
-x86_run(unsigned char *data, unsigned int size, x86_context_t *ctx) {
+x86_64_run(unsigned char *data, unsigned int size, x86_64_context_t *ctx) {
     /* Allocate executable memory */
     void *mem = mmap(
         NULL,
@@ -248,7 +248,7 @@ x86_run(unsigned char *data, unsigned int size, x86_context_t *ctx) {
     memcpy(mem, data, size);
 
     /* Typecast allocated memory to a function pointer */
-    void (*func) (x86_context_t *) = mem;
+    void (*func) (x86_64_context_t *) = mem;
 
     /* Run code */
     func(ctx);
@@ -295,14 +295,14 @@ arm_run(unsigned char *data, unsigned int size, arm_context_t *ctx) {
  * Function to be called from Python
  */
 static PyObject *
-pyasmjit_x86_jit(PyObject * self, PyObject * args)
+pyasmjit_x86_64_jit(PyObject * self, PyObject * args)
 {
-    unsigned char   *data;
-    unsigned int     size;
-    unsigned int     rv;
-    PyObject        *dict_in;
-    PyObject        *dict_out = PyDict_New();
-    x86_context_t    ctx;
+    unsigned char    *data;
+    unsigned int      size;
+    unsigned int      rv;
+    PyObject         *dict_in;
+    PyObject         *dict_out = PyDict_New();
+    x86_64_context_t  ctx;
 
     /* Check newly created dict is not null */
     if (dict_out == NULL)
@@ -312,13 +312,13 @@ pyasmjit_x86_jit(PyObject * self, PyObject * args)
     PyArg_ParseTuple(args, "s#O!", &data, &size, &PyDict_Type, &dict_in);
 
     /* Load context from input dictionary */
-    x86_load_context_from_dict(dict_in, &ctx);
+    x86_64_load_context_from_dict(dict_in, &ctx);
 
     /* Run input code */
-    rv = x86_run(data, size, &ctx);
+    rv = x86_64_run(data, size, &ctx);
 
     /* Save context to output dictionary */
-    x86_save_context_to_dict(dict_out, &ctx);
+    x86_64_save_context_to_dict(dict_out, &ctx);
 
     /* Build return value and return */
     return Py_BuildValue("IO", rv, dict_out);
@@ -410,7 +410,7 @@ pyasmjit_arm_free(PyObject * self, PyObject * args)
  * Bind Python function names to our C functions
  */
 static PyMethodDef pyasmjit_methods[] = {
-    {"x86_jit", pyasmjit_x86_jit, METH_VARARGS, "JIT execute X86_64 code"},
+    {"x86_64_jit", pyasmjit_x86_64_jit, METH_VARARGS, "JIT execute x86_64 code"},
     {"arm_jit", pyasmjit_arm_jit, METH_VARARGS, "JIT execute ARMv7 code"},
     {"arm_alloc", pyasmjit_arm_alloc, METH_VARARGS, "Map ARM memory"},
     {"arm_free", pyasmjit_arm_free, METH_VARARGS, "Unmap ARM memory"},

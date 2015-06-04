@@ -28,7 +28,7 @@ import tempfile
 
 import pyasmjit
 
-x86_template_assembly = """\
+x86_64_template_assembly = """\
 ;; Make sure to compile in 64 bits
 BITS 64
 
@@ -193,13 +193,13 @@ pop {{r0 - r12, lr}}
 blx lr
 """
 
-def x86_execute(assembly, context):
+def x86_64_execute(assembly, context):
     # Initialize return values
     rc  = 0
     ctx = {}
 
     # Instantiate assembly template.
-    assembly = x86_template_assembly.format(code=assembly)
+    assembly = x86_64_template_assembly.format(code=assembly)
 
     # Create temporary files for compilation.
     f_asm = tempfile.NamedTemporaryFile(delete=False)
@@ -225,7 +225,7 @@ def x86_execute(assembly, context):
         f_obj.close()
 
         # Run binary code.
-        rc, ctx = pyasmjit.x86_jit(binary, context)
+        rc, ctx = pyasmjit.x86_64_jit(binary, context)
     else:
         rc = return_code
 

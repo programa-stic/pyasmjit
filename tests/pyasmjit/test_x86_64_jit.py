@@ -30,7 +30,7 @@ import pyasmjit
 
 @unittest.skipUnless(platform.machine().lower() == 'x86_64',
                      'Not running on an x86_64 system')
-class Test_x86_jit(unittest.TestCase):
+class Test_x86_64_jit(unittest.TestCase):
     def test_add(self):
         code = """
             add rax, rbx
@@ -40,5 +40,5 @@ class Test_x86_jit(unittest.TestCase):
             'rbx': 0x2,
         }
 
-        rv, ctx_out = pyasmjit.x86_execute(code, ctx_in)
+        rv, ctx_out = pyasmjit.x86_64_execute(code, ctx_in)
         self.assertEqual(0x3, ctx_out['rax'])
