@@ -392,6 +392,39 @@ arm_run(unsigned char *data, unsigned int size, arm_context_t *ctx) {
  * Function to be called from Python
  */
 static PyObject *
+pyasmjit_x86_jit(PyObject * self, PyObject * args)
+{
+    unsigned char    *data;
+    unsigned int      size;
+    unsigned int      rv;
+    PyObject         *dict_in;
+    PyObject         *dict_out = PyDict_New();
+    x86_context_t  ctx;
+
+    /* Check newly created dict is not null */
+    if (dict_out == NULL)
+        return Py_BuildValue("I{}", -1);
+
+    /* Parse input arguments */
+    PyArg_ParseTuple(args, "s#O!", &data, &size, &PyDict_Type, &dict_in);
+
+    /* Load context from input dictionary */
+    x86_load_context_from_dict(dict_in, &ctx);
+
+    /* Run input code */
+    rv = x86_run(data, size, &ctx);
+
+    /* Save context to output dictionary */
+    x86_save_context_to_dict(dict_out, &ctx);
+
+    /* Build return value and return */
+    return Py_BuildValue("IO", rv, dict_out);
+}
+
+/*
+ * Function to be called from Python
+ */
+static PyObject *
 pyasmjit_x86_64_jit(PyObject * self, PyObject * args)
 {
     unsigned char    *data;
@@ -507,6 +540,7 @@ pyasmjit_arm_free(PyObject * self, PyObject * args)
  * Bind Python function names to our C functions
  */
 static PyMethodDef pyasmjit_methods[] = {
+    {"x86_jit", pyasmjit_x86_jit, METH_VARARGS, "JIT execute x86 code"},
     {"x86_64_jit", pyasmjit_x86_64_jit, METH_VARARGS, "JIT execute x86_64 code"},
     {"arm_jit", pyasmjit_arm_jit, METH_VARARGS, "JIT execute ARMv7 code"},
     {"arm_alloc", pyasmjit_arm_alloc, METH_VARARGS, "Map ARM memory"},
