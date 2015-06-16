@@ -22,8 +22,23 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from main import x86_execute
-from main import x86_64_execute
-from main import arm_execute
-from main import arm_alloc
-from main import arm_free
+import platform
+import unittest
+
+import pyasmjit
+
+
+@unittest.skipUnless(platform.machine().lower() == 'x86_64',
+                     'Not running on an x86_64 system')
+class Test_x86_64_jit(unittest.TestCase):
+    def test_add(self):
+        code = """
+            add rax, rbx
+        """
+        ctx_in = {
+            'rax': 0x1,
+            'rbx': 0x2,
+        }
+
+        rv, ctx_out = pyasmjit.x86_64_execute(code, ctx_in)
+        self.assertEqual(0x3, ctx_out['rax'])

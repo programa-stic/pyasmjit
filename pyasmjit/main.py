@@ -29,6 +29,78 @@ import tempfile
 import pyasmjit
 
 x86_template_assembly = """\
+;; Make sure to compile in 32 bits
+BITS 32
+
+;; Build stack frame
+push ebp
+mov ebp, esp
+
+;; Save registers
+pushad
+
+;; Store the pointer to context in EAX
+mov eax, [ebp+8]
+
+;; Load context (registers)
+mov ebx, [eax+ 1*4]
+mov ecx, [eax+ 2*4]
+mov edx, [eax+ 3*4]
+mov edi, [eax+ 4*4]
+mov esi, [eax+ 5*4]
+
+;; TODO: Set ebp, esp and eip registers
+
+; mov ebp, [eax+ 6*4]
+; mov esp, [eax+ 7*4]
+; mov eip, [eax+ 8*4]
+
+;; Load context (flags)
+push dword [eax+9*4]
+popfd
+
+;; Load eax value
+mov eax, [eax+ 0*4]
+
+;; Run code
+{code}
+
+;; Save current eax value and restore ptr to context
+push eax
+mov eax, [ebp+8]
+
+;; Save context
+mov [eax+ 1*4], ebx
+mov [eax+ 2*4], ecx
+mov [eax+ 3*4], edx
+mov [eax+ 4*4], edi
+mov [eax+ 5*4], esi
+
+; mov [eax+ 6*4], ebp
+; mov [eax+ 7*4], esp
+; mov [eax+ 8*4], eip
+
+;; Save context (flags)
+pushfd
+pop dword [eax+9*4]
+
+;; Copy eax to ebx
+mov ebx, eax
+
+;; Restore current eax value
+pop eax
+
+;; Save eax value
+mov [ebx+ 0*4], eax
+
+;; Restore registers
+popad
+
+pop ebp
+ret
+"""
+
+x86_64_template_assembly = """\
 ;; Make sure to compile in 64 bits
 BITS 64
 
@@ -226,6 +298,48 @@ def x86_execute(assembly, context):
 
         # Run binary code.
         rc, ctx = pyasmjit.x86_jit(binary, context)
+    else:
+        rc = return_code
+
+    # Remove temporary files.
+    os.remove(f_asm.name)
+    os.remove(f_obj.name)
+
+    return rc, ctx
+
+def x86_64_execute(assembly, context):
+    # Initialize return values
+    rc  = 0
+    ctx = {}
+
+    # Instantiate assembly template.
+    assembly = x86_64_template_assembly.format(code=assembly)
+
+    # Create temporary files for compilation.
+    f_asm = tempfile.NamedTemporaryFile(delete=False)
+    f_obj = tempfile.NamedTemporaryFile(delete=False)
+
+    # Write assembly to a file.
+    f_asm.write(assembly)
+    f_asm.close()
+
+    # Run nasm.
+    cmd_fmt = "nasm -f bin -o {0} {1}"
+    cmd = cmd_fmt.format(f_obj.name, f_asm.name)
+    return_code = subprocess.call(cmd, shell=True)
+
+    # Check for assembler errors.
+    if return_code == 0:
+        # Read binary code.
+        binary = ""
+        byte = f_obj.read(1)
+        while byte:
+            binary += byte
+            byte = f_obj.read(1)
+        f_obj.close()
+
+        # Run binary code.
+        rc, ctx = pyasmjit.x86_64_jit(binary, context)
     else:
         rc = return_code
 

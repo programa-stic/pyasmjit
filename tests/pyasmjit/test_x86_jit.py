@@ -28,17 +28,17 @@ import unittest
 import pyasmjit
 
 
-@unittest.skipUnless(platform.machine().lower() == 'x86_64',
-                     'Not running on an x86_64 system')
+@unittest.skipUnless(platform.machine().lower() in ['i686', 'x86'],
+                     'Not running on an x86 system')
 class Test_x86_jit(unittest.TestCase):
     def test_add(self):
         code = """
-            add rax, rbx
+            add eax, ebx
         """
         ctx_in = {
-            'rax': 0x1,
-            'rbx': 0x2,
+            'eax': 0x1,
+            'ebx': 0x2,
         }
 
         rv, ctx_out = pyasmjit.x86_execute(code, ctx_in)
-        self.assertEqual(0x3, ctx_out['rax'])
+        self.assertEqual(0x3, ctx_out['eax'])
