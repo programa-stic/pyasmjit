@@ -18,6 +18,7 @@ setup(
     author       = 'Christian Heitman',
     author_email = 'cnheitman@fundacionsadosky.org.ar',
     description  = 'JIT assemby code generation and execution',
+    download_url = 'https://github.com/programa-stic/pyasmjit/tarball/v0.2',
     license      = 'BSD 2-Clause',
     url          = 'http://github.com/programa-stic/pyasmjit',
     version      = __version__,
