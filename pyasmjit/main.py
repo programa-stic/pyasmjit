@@ -22,11 +22,16 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import absolute_import
+
 import os
 import subprocess
 import tempfile
 
-import pyasmjit
+from builtins import bytes
+
+from . import pyasmjit
+
 
 x86_template_assembly = """\
 ;; Make sure to compile in 32 bits
@@ -265,6 +270,7 @@ pop {{r0 - r12, lr}}
 blx lr
 """
 
+
 def x86_execute(assembly, context):
     # Initialize return values
     rc  = 0
@@ -278,7 +284,7 @@ def x86_execute(assembly, context):
     f_obj = tempfile.NamedTemporaryFile(delete=False)
 
     # Write assembly to a file.
-    f_asm.write(assembly)
+    f_asm.write(bytes(assembly, 'ascii'))
     f_asm.close()
 
     # Run nasm.
@@ -289,11 +295,7 @@ def x86_execute(assembly, context):
     # Check for assembler errors.
     if return_code == 0:
         # Read binary code.
-        binary = ""
-        byte = f_obj.read(1)
-        while byte:
-            binary += byte
-            byte = f_obj.read(1)
+        binary = f_obj.read()
         f_obj.close()
 
         # Run binary code.
@@ -306,6 +308,7 @@ def x86_execute(assembly, context):
     os.remove(f_obj.name)
 
     return rc, ctx
+
 
 def x86_64_execute(assembly, context):
     # Initialize return values
@@ -320,7 +323,7 @@ def x86_64_execute(assembly, context):
     f_obj = tempfile.NamedTemporaryFile(delete=False)
 
     # Write assembly to a file.
-    f_asm.write(assembly)
+    f_asm.write(bytes(assembly, 'ascii'))
     f_asm.close()
 
     # Run nasm.
@@ -331,11 +334,7 @@ def x86_64_execute(assembly, context):
     # Check for assembler errors.
     if return_code == 0:
         # Read binary code.
-        binary = ""
-        byte = f_obj.read(1)
-        while byte:
-            binary += byte
-            byte = f_obj.read(1)
+        binary = f_obj.read()
         f_obj.close()
 
         # Run binary code.
@@ -348,6 +347,7 @@ def x86_64_execute(assembly, context):
     os.remove(f_obj.name)
 
     return rc, ctx
+
 
 def arm_execute(assembly, context):
     # Initialize return values
@@ -363,7 +363,7 @@ def arm_execute(assembly, context):
     f_bin = tempfile.NamedTemporaryFile(delete=False)
 
     # Write assembly to a file.
-    f_asm.write(assembly)
+    f_asm.write(bytes(assembly, 'ascii'))
     f_asm.close()
 
     # Run nasm.
@@ -374,12 +374,7 @@ def arm_execute(assembly, context):
     # Check for assembler errors.
     if return_code == 0:
         # Read binary code.
-        binary = ""
-        byte = f_bin.read(1)
-        while byte:
-            binary += byte
-            byte = f_bin.read(1)
-        f_bin.close()
+        binary = f_bin.read()
 
         # Run binary code.
         rc, ctx, mem = pyasmjit.arm_jit(binary, context)
@@ -393,8 +388,10 @@ def arm_execute(assembly, context):
 
     return rc, ctx, mem
 
+
 def arm_alloc(size):
     return pyasmjit.arm_alloc(size)
+
 
 def arm_free():
     return pyasmjit.arm_free()

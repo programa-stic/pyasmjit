@@ -7,7 +7,7 @@ from setuptools import setup
 __version__ = '0.2'
 
 pyasmjit_module = Extension(
-    'pyasmjit',
+    'pyasmjit.pyasmjit',
     sources      = [
         'pyasmjit/pyasmjit.c'
     ],
@@ -19,6 +19,9 @@ setup(
     author_email = 'cnheitman@fundacionsadosky.org.ar',
     description  = 'JIT assemby code generation and execution',
     download_url = 'https://github.com/programa-stic/pyasmjit/tarball/v0.2',
+    install_requires = [
+        'future',
+    ],
     license      = 'BSD 2-Clause',
     url          = 'http://github.com/programa-stic/pyasmjit',
     version      = __version__,
@@ -31,7 +34,6 @@ setup(
         'Programming Language :: C',
         'Topic :: Software Development :: Assemblers',
     ],
-    ext_package  = 'pyasmjit',
     ext_modules  = [
         pyasmjit_module,
     ],

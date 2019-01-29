@@ -175,7 +175,7 @@ x86_load_context_from_dict(PyObject *dict, x86_context_t *ctx)
     ctx->ebp    = load_register_from_dict(dict,    "ebp",     0);
     ctx->esp    = load_register_from_dict(dict,    "esp",     0);
     ctx->eip    = load_register_from_dict(dict,    "eip",     0);
-    // TODO - check the default value of eflags
+    /* TODO: Check the default value of eflags. */
     ctx->eflags = load_register_from_dict(dict, "eflags", 0x202);
 }
 
@@ -484,7 +484,11 @@ pyasmjit_arm_jit(PyObject * self, PyObject * args)
     arm_save_context_to_dict(dict_out, &ctx);
 
     /* TODO: Check that if pool is null it doesn't break the function. */
+#if (PY_MAJOR_VERSION == 3)
+    PyObject *py_buffer = Py_BuildValue("y#", arm_mem_pool, arm_mem_pool_size);
+#else
     PyObject *py_buffer = Py_BuildValue("s#", arm_mem_pool, arm_mem_pool_size);
+#endif
 
     /* Build return value and return */
     return Py_BuildValue("IOO", rv, dict_out, py_buffer);
@@ -496,7 +500,7 @@ pyasmjit_arm_jit(PyObject * self, PyObject * args)
 static PyObject *
 pyasmjit_arm_alloc(PyObject * self, PyObject * args)
 {
-    unsigned int     size;
+    unsigned int size;
 
     /* Parse input arguments */
     PyArg_ParseTuple(args, "I", &size);
@@ -514,8 +518,6 @@ pyasmjit_arm_alloc(PyObject * self, PyObject * args)
     );
 
     memset(arm_mem_pool, 0, arm_mem_pool_size);
-
-    // printf("DIR (in C): %x\n", arm_mem_pool);
 
     /* Build return value and return */
     return Py_BuildValue("I", arm_mem_pool);
@@ -548,6 +550,33 @@ static PyMethodDef pyasmjit_methods[] = {
     {NULL, NULL, 0, NULL}
 };
 
+#if (PY_MAJOR_VERSION == 3)
+/*
+ * Module definition
+ * The arguments of this structure tell Python what to call your extension,
+ * what it's methods are and where to look for it's method definitions
+ */
+static struct PyModuleDef pyasmjit_definition = {
+    PyModuleDef_HEAD_INIT,
+    "pyasmjit",
+    "JIT module for pyasmjit",
+    -1,
+    pyasmjit_methods
+};
+
+/*
+ * Module initialization
+ * Python calls this function when importing your extension. It is important
+ * that this function is named PyInit_[[your_module_name]] exactly, and matches
+ * the name keyword argument in setup.py's setup() call.
+ */
+PyMODINIT_FUNC PyInit_pyasmjit(void) {
+    Py_Initialize();
+    return PyModule_Create(&pyasmjit_definition);
+}
+
+#else /* Python 2.x */
+
 static const char *pyasmjit_docstring = "JIT module for pyasmjit";
 
 /*
@@ -558,3 +587,5 @@ initpyasmjit(void)
 {
     (void) Py_InitModule3("pyasmjit", pyasmjit_methods, pyasmjit_docstring);
 }
+
+#endif
