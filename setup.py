@@ -4,7 +4,7 @@ from setuptools import Extension
 from setuptools import find_packages
 from setuptools import setup
 
-__version__ = '0.2'
+__version__ = '0.3.0'
 
 pyasmjit_module = Extension(
     'pyasmjit.pyasmjit',
@@ -16,9 +16,9 @@ pyasmjit_module = Extension(
 setup(
     name         = 'pyasmjit',
     author       = 'Christian Heitman',
-    author_email = 'cnheitman@fundacionsadosky.org.ar',
+    author_email = 'barfframework@gmail.com',
     description  = 'JIT assemby code generation and execution',
-    download_url = 'https://github.com/programa-stic/pyasmjit/tarball/v0.2',
+    download_url = 'https://github.com/programa-stic/pyasmjit/tarball/v0.3.0',
     install_requires = [
         'future',
     ],
@@ -31,6 +31,7 @@ setup(
         'Natural Language :: English',
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: C',
         'Topic :: Software Development :: Assemblers',
     ],

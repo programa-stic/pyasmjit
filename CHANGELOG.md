@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+
+## [0.3.0] - 2019-11-05
 ### Added
 - Add PyPI support.
 - Add x86 support by @adrianherrera.
@@ -32,5 +34,6 @@ All notable changes to this project will be documented in this file.
 ### Added
 - First release.
 
-[Unreleased]: https://github.com/programa-stic/pyasmjit/compare/v0.2...master
+[Unreleased]: https://github.com/programa-stic/pyasmjit/compare/v0.3.0...master
+[0.3.0]: https://github.com/programa-stic/pyasmjit/compare/v0.2...v0.3.0
 [0.2]: https://github.com/programa-stic/pyasmjit/compare/v0.1...v0.2
