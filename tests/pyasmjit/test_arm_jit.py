@@ -31,6 +31,7 @@ import pyasmjit
 @unittest.skipUnless(platform.machine().lower() == 'armv7l',
                      'Not running on an ARMv7 system')
 class Test_arm_jit(unittest.TestCase):
+
     def test_add(self):
         code = """
             add r7, r7, r8

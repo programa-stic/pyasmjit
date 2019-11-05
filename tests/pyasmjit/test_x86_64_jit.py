@@ -31,6 +31,7 @@ import pyasmjit
 @unittest.skipUnless(platform.machine().lower() == 'x86_64',
                      'Not running on an x86_64 system')
 class Test_x86_64_jit(unittest.TestCase):
+
     def test_add(self):
         code = """
             add rax, rbx

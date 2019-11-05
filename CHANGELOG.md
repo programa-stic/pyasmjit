@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - Refactor test code to make use of Python's unit test module by @adrianherrera.
 
 ### Fixed
+- Fix Python 3 compatibility issues.
 - Fix x86 tests by @adrianherrera.
 
 ## [0.2] - 2015-04-06

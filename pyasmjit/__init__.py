@@ -22,8 +22,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from main import x86_execute
-from main import x86_64_execute
-from main import arm_execute
-from main import arm_alloc
-from main import arm_free
+from .main import arm_alloc
+from .main import arm_execute
+from .main import arm_free
+from .main import x86_64_execute
+from .main import x86_execute
